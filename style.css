@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, serif;
+}
+
+#results {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results td {
+    border: lightgrey solid 1px;
+    padding: 2px 8px;
+}
+
+.nonterminates, .maybe, .timeout, .error {
+    text-align: center;
+}
+
+.nonterminates {
+    background-color: green;
+}
+
+.maybe {
+    background-color: khaki;
+}
+
+.timeout {
+    background-color: darksalmon;
+}
+
+.error {
+    background-color: red;
+}
