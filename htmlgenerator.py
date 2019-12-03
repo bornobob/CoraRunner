@@ -82,7 +82,7 @@ class HTMLGenerator:
                 with tbody():
                     for file in sorted(list(self.results_by_file.keys())):
                         row = tr()
-                        row += td(basename(file))
+                        row += td(a(basename(file), href='file:///{}'.format(file)))
                         for c in self.configs:
                             result = self.get_result(c, file)
                             if result:
