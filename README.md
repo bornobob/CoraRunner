@@ -54,3 +54,10 @@ python htmlgenerator.py <results file> <output file>
 ```
 The `<results file>` should be formatted as described in the previous section.  
 The `<output file>` will be an html file with the results from the results file and may not exist yet.
+
+## Converter
+The `converter.py` script converts `.xml` TRSs to the `.mstrs` representation. You can either give it an input and output file, or an input and output directory. This way you can conver an entire directory at once. The converter should be called as follows:
+```bash
+python converter.py (dir | file) <input path> <output path>
+```
+When `dir` is used, the `<input path>` has to exist but the `<output path>` will be generated if it does not exist yet.  
