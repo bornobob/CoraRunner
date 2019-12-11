@@ -67,6 +67,30 @@ class HTMLGenerator:
                     result += 1
         return result
 
+    def get_total_times(self, config):
+        total_cpu, total_cora = 0., 0.
+        for results in self.results_by_file.values():
+            for res in results:
+                if res.config == config:
+                    total_cpu += float(res.result['cpu_time'])
+                    total_cora += float(res.result['cora_time'])
+        return total_cpu, total_cora
+
+    def get_total_timeouts(self, config):
+        result = 0
+        for results in self.results_by_file.values():
+            for res in results:
+                if res.config == config and res.result['result_type'] in ['TIMEOUT']:
+                    result += 1
+        return result
+
+    @staticmethod
+    def format_millis(millis):
+        seconds = int(millis / 1000) % 60
+        minutes = int((millis / 1000) / 60) % 60
+        hours = int((millis / 1000) / 3600) % 24
+        return '{}:{:02d}:{:02d}'.format(hours, minutes, seconds)
+
     def create_html_page(self):
         d = document(title='Cora Results')
         with d:
@@ -96,12 +120,25 @@ class HTMLGenerator:
                                 row += td()
                 with tfoot():
                     foot = tr()
-                    foot.add(th('Total:'))
+                    foot.add(th('Total (found):'))
                     for c in self.configs:
                         foot.add(th('{} / {}'.format(
                             self.get_nr_success(c),
                             len(list(self.results_by_file.keys()))
                         )))
+                    foot = tr()
+                    foot.add(th('Total (time):'))
+                    for c in self.configs:
+                        cpu, cora = self.get_total_times(c)
+                        foot.add(th('{} / {}'.format(
+                            self.format_millis(cpu),
+                            self.format_millis(cora)
+
+                        )))
+                    foot = tr()
+                    foot.add(th('Total (timeouts):'))
+                    for c in self.configs:
+                        foot.add(th('{}'.format(self.get_total_timeouts(c))))
         return d.render()
 
     def generate_html(self):
