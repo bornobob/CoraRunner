@@ -4,7 +4,6 @@ from pathlib import Path
 from json import dumps, loads
 from time import time
 from re import compile
-from sys import argv
 from argparse import ArgumentParser
 
 
