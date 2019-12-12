@@ -4,8 +4,8 @@ from dominate.util import raw
 from json import loads
 from collections import defaultdict
 from os.path import basename
-from sys import argv
 from pathlib import Path
+from argparse import ArgumentParser
 
 
 class Result:
@@ -95,7 +95,7 @@ class HTMLGenerator:
         d = document(title='Cora Results')
         with d:
             with d.head:
-                link(rel='stylesheet', href='style.css')
+                style(open('style.css', 'r').read())
             h1('RESULTS')
             with table(id='results'):
                 with thead():
@@ -149,17 +149,23 @@ class HTMLGenerator:
             f.write(self.create_html_page())
 
 
-if __name__ == '__main__':
-    if len(argv) != 3:
-        print('Call as "python {} <results file> <output file>", aborting...'.format(argv[0]))
-        exit(1)
+def get_argparser():
+    parser = ArgumentParser()
+    parser.add_argument('resultfile', type=str, metavar='<result file>', help='.json file with results')
+    parser.add_argument('outputfile', type=str, metavar='<output file>', help='Resulting .html file')
+    return parser
 
-    if not Path(argv[1]).exists():
+
+def check_valid_args(result_file, output_file):
+    if not Path(result_file).exists():
         print('Results file does not exist, aborting...')
-        exit(1)
-
-    if Path(argv[2]).exists():
+        return False
+    if Path(output_file).exists():
         print('Output file already exists, aborting...')
-        exit(1)
+        return False
+    return True
 
-    HTMLGenerator(argv[1], argv[2]).generate_html()
+
+if __name__ == '__main__':
+    arguments = get_argparser().parse_args()
+    HTMLGenerator(arguments.resultfile, arguments.outputfile).generate_html()
