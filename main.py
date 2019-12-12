@@ -89,7 +89,7 @@ class CoraRunner:
                 full_path = path.join(self.test_files_path, file)
                 analysis_res = self.analyse(config, full_path)
                 result.append({'file': full_path, 'config': config.__dict__, 'result': analysis_res.__dict__})
-                print(f'[{conf_idx}/{len(configurations)}] [{file_idx}/{len(files)}] - Processed: {path}')
+                print(f'[{conf_idx}/{len(configurations)}] [{file_idx}/{len(files)}] - Processed: {full_path}')
             with open(self.output_file, 'w') as f:
                 f.write(dumps(result))
 
