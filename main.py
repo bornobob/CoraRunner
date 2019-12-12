@@ -5,6 +5,7 @@ from json import dumps, loads
 from time import time
 from re import compile
 from sys import argv
+from argparse import ArgumentParser
 
 
 class AnalysisResult:
@@ -93,26 +94,30 @@ class CoraRunner:
                 f.write(dumps(result))
 
 
-def get_arguments():
-    if len(argv) != 4:
-        print('Call as "python {} <settings file> <test file directory> <result file>", aborting...'.format(argv[0]))
-        exit(1)
+def get_argparser():
+    parser = ArgumentParser()
+    parser.add_argument('settings', type=str, metavar='<settings file>', help='Settings .json file')
+    parser.add_argument('testdir', type=str, metavar='<test file directory>', help='Directory with test files')
+    parser.add_argument('resultfile', type=str, metavar='<result file>', help='Resulting .json file')
+    return parser
 
-    if not Path(argv[1]).exists():
+
+def check_valid_args(settings_file, test_dir, result_file):
+    if not Path(settings_file).exists():
         print('Settings file does not exist, aborting...')
-        exit(1)
-
-    if not Path(argv[2]).exists():
+        return False
+    if not Path(test_dir).exists():
         print('Test files directory does not exist, aborting...')
-        exit(1)
-
-    if Path(argv[3]).exists():
+        return False
+    if Path(result_file).exists():
         print('Output file already exists, aborting...')
-        exit(1)
-
-    return argv[1], argv[2], argv[3]
+        return False
+    return True
 
 
 if __name__ == '__main__':
-    settings_file, test_files_dir, output = get_arguments()
-    CoraRunner(settings_file, test_files_dir, output).do_analysis()
+    arguments = get_argparser().parse_args()
+    if not check_valid_args(arguments.settings, arguments.testdir, arguments.resultfile):
+        exit(1)
+    else:
+        CoraRunner(arguments.settings, arguments.testdir, arguments.resultfile).do_analysis()
