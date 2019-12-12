@@ -1,6 +1,5 @@
 from subprocess import Popen, PIPE, STDOUT
-from os import walk
-from os.path import join as path_join
+from os import listdir, path
 from pathlib import Path
 from json import dumps, loads
 from time import time
@@ -82,16 +81,16 @@ class CoraRunner:
 
     def do_analysis(self):
         result = []
-        for config in self.get_configurations(**self.configs):
-            for root, _, files in walk(self.test_files_path):
-                for file in files:
-                    path = path_join(root, file)
-                    analysis_res = self.analyse(config, path)
-                    result.append({'file': path, 'config': config.__dict__, 'result': analysis_res.__dict__})
-                    print('Processed: {}'.format(path))
-                break
-        with open(self.output_file, 'w') as f:
-            f.write(dumps(result))
+        configurations = self.get_configurations(**self.configs)
+        files = listdir(self.test_files_path)
+        for conf_idx, config in enumerate(configurations):
+            for file_idx, file in enumerate(files):
+                full_path = path.join(self.test_files_path, file)
+                analysis_res = self.analyse(config, full_path)
+                result.append({'file': full_path, 'config': config.__dict__, 'result': analysis_res.__dict__})
+                print(f'[{conf_idx}/{len(configurations)}] [{file_idx}/{len(files)}] - Processed: {path}')
+            with open(self.output_file, 'w') as f:
+                f.write(dumps(result))
 
 
 def get_arguments():
