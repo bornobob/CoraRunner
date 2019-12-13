@@ -7,9 +7,16 @@ body {
     border-collapse: collapse;
 }
 
-#results td {
+#results td, #results th {
     border: lightgrey solid 1px;
     padding: 2px 8px;
+}
+
+#results th {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    background: white;
 }
 
 .nonterminates, .maybe, .timeout, .error {
